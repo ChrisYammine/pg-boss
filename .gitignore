@@ -1,6 +1,6 @@
 node_modules
 .idea
-lib
+# lib
 coverage/
 *.tgz
 .nyc_output/
