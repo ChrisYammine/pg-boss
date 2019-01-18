@@ -2,7 +2,10 @@
 
 declare namespace PgBoss {
   interface Db {
-    executeSql(text: string, values: any[]): Promise<{ rows: any[]; rowCount: number }>;
+    executeSql(
+      text: string,
+      values: any[]
+    ): Promise<{ rows: any[]; rowCount: number }>;
   }
 
   interface DatabaseOptions {
@@ -42,7 +45,11 @@ declare namespace PgBoss {
     archiveCheckIntervalMinutes?: number;
   }
 
-  type ConstructorOptions = DatabaseOptions & JobCreationOptions & JobFetchOptions & JobExpirationOptions & JobArchiveOptions;
+  type ConstructorOptions = DatabaseOptions &
+    JobCreationOptions &
+    JobFetchOptions &
+    JobExpirationOptions &
+    JobArchiveOptions;
 
   interface PublishOptions {
     startAfter?: number | string | Date;
@@ -65,7 +72,10 @@ declare namespace PgBoss {
   }
 
   interface SubscribeHandler<ReqData, ResData> {
-    (job: PgBoss.JobWithDoneCallback<ReqData, ResData>, done: PgBoss.JobDoneCallback<ResData>): void;
+    (
+      job: PgBoss.JobWithDoneCallback<ReqData, ResData>,
+      done: PgBoss.JobDoneCallback<ResData>
+    ): void;
   }
 
   interface Request {
@@ -104,26 +114,85 @@ declare class PgBoss {
   constructor(connectionString: string);
   constructor(options: PgBoss.ConstructorOptions);
 
+  static getConstructionPlans(schema: string): string;
+  static getMigrationPlans(
+    schema: string,
+    version: string,
+    uninstall: boolean
+  ): string;
+
   on(event: "error", handler: (error: Error) => void): void;
   on(event: "archived", handler: (count: number) => void): void;
   on(event: "expired", handler: (count: number) => void): void;
-  on(event: "monitor-states", handler: (monitorStates: PgBoss.MonitorStates) => void): void;
+  on(
+    event: "monitor-states",
+    handler: (monitorStates: PgBoss.MonitorStates) => void
+  ): void;
   start(): Promise<PgBoss>;
   stop(): Promise<void>;
   connect(): Promise<PgBoss>;
   disconnect(): Promise<void>;
   publish(request: PgBoss.Request): Promise<string | null>;
   publish(name: string, data: object): Promise<string | null>;
-  publish(name: string, data: object, options: PgBoss.PublishOptions): Promise<string | null>;
-  publishAfter(name: string, data: object, options: PgBoss.PublishOptions, date: Date): Promise<string | null>;
-  publishAfter(name: string, data: object, options: PgBoss.PublishOptions, dateString: string): Promise<string | null>;
-  publishAfter(name: string, data: object, options: PgBoss.PublishOptions, seconds: number): Promise<string | null>;
-  publishOnce(name: string, data: object, options: PgBoss.PublishOptions, key: string): Promise<string | null>;
-  publishThrottled(name: string, data: object, options: PgBoss.PublishOptions, seconds: number): Promise<string | null>;
-  publishThrottled(name: string, data: object, options: PgBoss.PublishOptions, seconds: number, key: string): Promise<string | null>;
-  publishDebounced(name: string, data: object, options: PgBoss.PublishOptions, seconds: number): Promise<string | null>;
-  publishDebounced(name: string, data: object, options: PgBoss.PublishOptions, seconds: number, key: string): Promise<string | null>;
-  subscribe<ReqData, ResData>(name: string, handler: PgBoss.SubscribeHandler<ReqData, ResData>): Promise<void>;
+  publish(
+    name: string,
+    data: object,
+    options: PgBoss.PublishOptions
+  ): Promise<string | null>;
+  publishAfter(
+    name: string,
+    data: object,
+    options: PgBoss.PublishOptions,
+    date: Date
+  ): Promise<string | null>;
+  publishAfter(
+    name: string,
+    data: object,
+    options: PgBoss.PublishOptions,
+    dateString: string
+  ): Promise<string | null>;
+  publishAfter(
+    name: string,
+    data: object,
+    options: PgBoss.PublishOptions,
+    seconds: number
+  ): Promise<string | null>;
+  publishOnce(
+    name: string,
+    data: object,
+    options: PgBoss.PublishOptions,
+    key: string
+  ): Promise<string | null>;
+  publishThrottled(
+    name: string,
+    data: object,
+    options: PgBoss.PublishOptions,
+    seconds: number
+  ): Promise<string | null>;
+  publishThrottled(
+    name: string,
+    data: object,
+    options: PgBoss.PublishOptions,
+    seconds: number,
+    key: string
+  ): Promise<string | null>;
+  publishDebounced(
+    name: string,
+    data: object,
+    options: PgBoss.PublishOptions,
+    seconds: number
+  ): Promise<string | null>;
+  publishDebounced(
+    name: string,
+    data: object,
+    options: PgBoss.PublishOptions,
+    seconds: number,
+    key: string
+  ): Promise<string | null>;
+  subscribe<ReqData, ResData>(
+    name: string,
+    handler: PgBoss.SubscribeHandler<ReqData, ResData>
+  ): Promise<void>;
   subscribe<ReqData, ResData>(
     name: string,
     options: PgBoss.SubscribeOptions,
@@ -131,12 +200,19 @@ declare class PgBoss {
   ): Promise<void>;
   unsubscribe(name: string): Promise<boolean>;
   onComplete(name: string, handler: Function): Promise<void>;
-  onComplete(name: string, options: PgBoss.SubscribeOptions, handler: Function): Promise<void>;
+  onComplete(
+    name: string,
+    options: PgBoss.SubscribeOptions,
+    handler: Function
+  ): Promise<void>;
   offComplete(name: string): Promise<boolean>;
   fetch<T>(name: string): Promise<PgBoss.Job<T> | null>;
   fetch<T>(name: string, batchSize: number): Promise<PgBoss.Job<T>[] | null>;
   fetchCompleted<T>(name: string): Promise<PgBoss.Job<T> | null>;
-  fetchCompleted<T>(name: string, batchSize: number): Promise<PgBoss.Job<T>[] | null>;
+  fetchCompleted<T>(
+    name: string,
+    batchSize: number
+  ): Promise<PgBoss.Job<T>[] | null>;
   cancel(id: string): Promise<void>;
   cancel(ids: string[]): Promise<void>;
   complete(id: string): Promise<void>;
